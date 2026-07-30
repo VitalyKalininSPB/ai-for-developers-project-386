@@ -1,0 +1,299 @@
+openapi: "3.1.0"
+info:
+  title: Time Slot Booking API
+  version: "1.0.0"
+  description: |
+    API for booking time slots of an owner's calendar.
+    Guests can view free slots and book them without authentication.
+
+servers:
+  - url: /api
+
+paths:
+  /owners/{ownerId}/free-slots:
+    get:
+      summary: List free slots for a given date and event type
+      operationId: getFreeSlots
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          description: Date in YYYY-MM-DD format
+          schema:
+            type: string
+            format: date
+        - name: eventTypeId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of free time intervals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeInterval"
+        "404":
+          description: Owner or event type not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /owners/{ownerId}/event-types:
+    get:
+      summary: List event types for an owner
+      operationId: listEventTypes
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of event types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventType"
+
+  /owners/{ownerId}/slots:
+    get:
+      summary: List all bookings for an owner on a given date
+      operationId: listOwnerSlots
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Array of booked slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Slot"
+
+  /slots:
+    post:
+      summary: Book a slot
+      operationId: createSlot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSlotRequest"
+      responses:
+        "201":
+          description: Slot successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slot"
+        "409":
+          description: Slot is already occupied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /slots/{slotId}:
+    patch:
+      summary: Cancel a booking
+      operationId: cancelSlot
+      parameters:
+        - name: slotId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [cancelled]
+              required: [status]
+      responses:
+        "200":
+          description: Slot status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slot"
+        "404":
+          description: Slot not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+      required: [error]
+
+    WorkingHours:
+      type: object
+      description: Standard working hours for a specific day of the week
+      properties:
+        dayOfWeek:
+          type: string
+          enum:
+            - Monday
+            - Tuesday
+            - Wednesday
+            - Thursday
+            - Friday
+            - Saturday
+            - Sunday
+        startTime:
+          type: string
+          description: Start time in HH:mm format
+          example: "09:00"
+        endTime:
+          type: string
+          description: End time in HH:mm format
+          example: "18:00"
+      required: [dayOfWeek, startTime, endTime]
+
+    Owner:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        workingHours:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkingHours"
+        timezone:
+          type: string
+          example: Europe/Moscow
+      required: [id, name, workingHours, timezone]
+
+    EventType:
+      type: object
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+        name:
+          type: string
+          example: "30-min meeting"
+        duration:
+          type: integer
+          description: Duration in minutes
+          example: 30
+        description:
+          type: string
+        bufferMinutes:
+          type: integer
+          description: Gap after this event type in minutes
+          default: 0
+      required: [id, ownerId, name, duration]
+
+    Guest:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required: [id, name, email]
+
+    BookingStatus:
+      type: string
+      enum: [confirmed, cancelled]
+
+    Slot:
+      type: object
+      properties:
+        id:
+          type: string
+        eventTypeId:
+          type: string
+        guestId:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, eventTypeId, guestId, startTime, endTime, status, createdAt]
+
+    CreateSlotRequest:
+      type: object
+      description: Request body for creating a slot booking
+      properties:
+        eventTypeId:
+          type: string
+        guestName:
+          type: string
+        guestEmail:
+          type: string
+          format: email
+        startTime:
+          type: string
+          format: date-time
+          description: Desired slot start time in UTC
+      required: [eventTypeId, guestName, guestEmail, startTime]
+
+    TimeInterval:
+      type: object
+      description: A free time interval
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+      required: [startTime, endTime]
