@@ -23,7 +23,10 @@ export default function App() {
 
   useEffect(() => {
     api.getEventTypes(OWNER_ID)
-      .then(setEventTypes)
+      .then(types => {
+        setEventTypes(types);
+        if (types.length > 0) setEventTypeId(types[0].id);
+      })
       .catch(() => setEventTypes([]));
   }, []);
 
