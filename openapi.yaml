@@ -34,7 +34,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Array of free time intervals
+          description: Array of free time intervals (empty if owner doesn't work this day)
           content:
             application/json:
               schema:
@@ -42,7 +42,9 @@ paths:
                 items:
                   $ref: "#/components/schemas/TimeInterval"
         "404":
-          description: Owner or event type not found
+          description: >
+            Owner or event type not found.
+            No free interval of the required duration exists (e.g. only 15-min gaps remain but event type needs 60 min).
           content:
             application/json:
               schema:
@@ -118,7 +120,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "422":
-          description: Validation error
+          description: |
+            Validation error — e.g. the requested startTime doesn't leave enough room
+            for the event type duration before the next booking or end of working hours.
           content:
             application/json:
               schema:
