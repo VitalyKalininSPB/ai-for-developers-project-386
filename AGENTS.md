@@ -40,10 +40,3 @@ Browser → Vite Dev (:5173) → proxy /api/* → Mock Server (:4010)
 - Event types: Quick Chat (15min), 30-min Meeting, 1-hour Workshop
 - Working hours: Mon-Fri 09:00-18:00, Sat 10:00-16:00, Sun off
 
-## Conventions (token saving)
-- No JSDoc comments in code
-- No prop-types (use runtime checks only)
-- Single `api.js` file, no service layer
-- State managed with `useState`/`useCallback`, no Redux
-- CSS in single `App.css`
-- Prefer `handleBook`/`handleCancel` inline patterns
