@@ -15,10 +15,10 @@ export default function BookingsList({ slots, onCancel, loading }) {
           <li key={s.id} className={s.status === 'cancelled' ? 'cancelled' : ''}>
             <span>
               {formatTime(s.startTime)} – {formatTime(s.endTime)}{' '}
-              <span className="badge">{s.status}</span>
+              <span className={`badge ${s.status}`}>{s.status}</span>
             </span>
             {s.status === 'confirmed' && (
-              <button className="small" onClick={() => onCancel(s.id)}>
+              <button className="btn-small" onClick={() => onCancel(s.id)}>
                 Cancel
               </button>
             )}

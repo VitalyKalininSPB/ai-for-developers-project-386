@@ -75,40 +75,46 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>Time Slot Booking</h1>
-
-      <div className="controls">
-        <EventTypeSelector
-          eventTypes={eventTypes}
-          value={eventTypeId}
-          onChange={setEventTypeId}
-        />
-        <DatePicker value={date} onChange={setDate} />
-        <button onClick={loadData} className="primary">Refresh</button>
-      </div>
-
-      {error && <div className="error">{error}</div>}
-
-      {selectedEventType && (
-        <div className="info">
-          Selected: {selectedEventType.name} ({selectedEventType.duration} min)
+      <div className="header">Time Slot Booking</div>
+      <div className="content">
+        <div className="controls-card">
+          <EventTypeSelector
+            eventTypes={eventTypes}
+            value={eventTypeId}
+            onChange={setEventTypeId}
+          />
+          <DatePicker value={date} onChange={setDate} />
+          <button onClick={loadData} className="btn btn-primary">Refresh</button>
         </div>
-      )}
 
-      <div className="columns">
-        <FreeSlots slots={freeSlots} onBook={setSelectedSlot} loading={loadingFree} />
-        <BookingsList slots={bookings} onCancel={handleCancel} loading={loadingBookings} />
+        {error && <div className="error">{error}</div>}
+
+        {selectedEventType && (
+          <div className="info-card">
+            {selectedEventType.name} &middot; {selectedEventType.duration} min
+            {selectedEventType.bufferMinutes > 0 && ` + ${selectedEventType.bufferMinutes} buffer`}
+          </div>
+        )}
+
+        <div className="columns">
+          <div className="column-card">
+            <FreeSlots slots={freeSlots} onBook={setSelectedSlot} loading={loadingFree} />
+          </div>
+          <div className="column-card">
+            <BookingsList slots={bookings} onCancel={handleCancel} loading={loadingBookings} />
+          </div>
+        </div>
+
+        {selectedSlot && (
+          <BookingForm
+            selectedSlot={selectedSlot}
+            eventTypeId={eventTypeId}
+            onConfirm={handleBook}
+            onCancel={() => setSelectedSlot(null)}
+            loading={bookingLoading}
+          />
+        )}
       </div>
-
-      {selectedSlot && (
-        <BookingForm
-          selectedSlot={selectedSlot}
-          eventTypeId={eventTypeId}
-          onConfirm={handleBook}
-          onCancel={() => setSelectedSlot(null)}
-          loading={bookingLoading}
-        />
-      )}
     </div>
   );
 }

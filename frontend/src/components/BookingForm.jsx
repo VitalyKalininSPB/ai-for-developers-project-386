@@ -47,10 +47,10 @@ export default function BookingForm({ selectedSlot, eventTypeId, onConfirm, onCa
             />
           </div>
           <div className="actions">
-            <button type="submit" disabled={loading}>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
               {loading ? 'Booking...' : 'Confirm Booking'}
             </button>
-            <button type="button" className="secondary" onClick={onCancel}>
+            <button type="button" className="btn btn-secondary" onClick={onCancel}>
               Cancel
             </button>
           </div>
