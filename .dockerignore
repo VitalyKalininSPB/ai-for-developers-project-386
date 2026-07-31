@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/data
+backend/data
+e2e
+.github
+.git
+*.log
+HexletDemo.*

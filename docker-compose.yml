@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    image: time-slot-booking
+    ports:
+      - "4010:4010"
+    volumes:
+      - booking-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  booking-data:
