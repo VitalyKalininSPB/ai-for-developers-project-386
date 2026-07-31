@@ -26,7 +26,7 @@ export default defineConfig({
       timeout: 30000,
     },
     {
-      command: 'API_TARGET=http://127.0.0.1:4011 npm run dev -- --host 127.0.0.1',
+      command: 'API_TARGET=http://127.0.0.1:4011 npm run dev -- --host 127.0.0.1 --port 5174 --strictPort',
       cwd: '../frontend',
       url: `http://127.0.0.1:${FRONTEND_PORT}`,
       reuseExistingServer: false,
