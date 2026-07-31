@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "mock": "node mock-server.js",
-    "dev:mock": "node mock-server.js & vite",
+    "mock": "npm --prefix ../backend run dev",
+    "dev:mock": "npm --prefix ../backend run dev & vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
