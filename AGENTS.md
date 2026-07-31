@@ -9,9 +9,10 @@
 
 ```
 Browser → Vite Dev (:5173) → proxy /api/* → Backend (:4010) → SQLite
+E2E (Playwright) → Vite Dev (:5174) → proxy /api/* → Backend (:4011) → SQLite (e2e.db)
 ```
 
-1. **Vite proxy** (`frontend/vite.config.js`) — перенаправляет `/api/*` на `localhost:4010`
+1. **Vite proxy** (`frontend/vite.config.js`) — перенаправляет `/api/*` на `localhost:4010` (переопределяется через `API_TARGET` для E2E)
 2. **Backend** (`backend/`) — Express 5 + TypeScript, SQLite (файл `backend/data/app.db`), те же endpoint'ы что в openapi.yaml
 3. **React SPA** — ходит на `/api/*`, не знает про бэкенд
 
@@ -27,6 +28,9 @@ Backend commands run from `backend/` (`npm --prefix ../backend ...` из `fronte
 | `npm run build` | Production build (backend: `tsc`, frontend: `vite build`) |
 | `npm run lint` | ESLint (frontend + backend) |
 | `npm test` (в `backend/`) | Vitest + Supertest |
+| `npm test` (в `e2e/`) | Playwright E2E (chromium): поднимает backend на свежей БД `backend/data/e2e.db` (:4011) + Vite (:5174) |
+
+E2E (`e2e/`): первый запуск требует `npm install` в `e2e/` и `npx playwright install chromium`. Порт 4011/5174 изолированы от dev-окружения (4010/5173). Playwright запинован на 1.49.1 — Node 18.
 
 ## Key files
 
@@ -38,6 +42,8 @@ Backend commands run from `backend/` (`npm --prefix ../backend ...` из `fronte
 | `backend/src/app.ts` | Express app factory (used by tests) |
 | `backend/src/db.ts` | SQLite schema + seed (`owner-1`, event types) |
 | `backend/src/lib/booking.ts` | Business logic: free slots, booking, cancellation |
+| `e2e/playwright.config.js` | Playwright config: webServer (backend :4011 + Vite :5174), `workers: 1`, `timezoneId: UTC` |
+| `e2e/tests/booking.spec.js` | E2E: бронь, отмена, смена event type, нерабочий день, конфликт 409 |
 | `main.tsp` | API type definition (TypeSpec) |
 | `openapi.yaml` | Generated OpenAPI spec |
 

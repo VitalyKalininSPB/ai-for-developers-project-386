@@ -9,6 +9,7 @@
     "dev:mock": "npm --prefix ../backend run dev & vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:e2e": "npm --prefix ../e2e test",
     "preview": "vite preview"
   },
   "dependencies": {

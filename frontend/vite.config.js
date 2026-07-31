@@ -1,3 +1,4 @@
+/* global process */
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -6,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:4010',
+        target: process.env.API_TARGET ?? 'http://localhost:4010',
         changeOrigin: true,
       },
     },
