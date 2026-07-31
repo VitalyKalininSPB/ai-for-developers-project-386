@@ -32,6 +32,26 @@ Backend commands run from `backend/` (`npm --prefix ../backend ...` из `fronte
 
 E2E (`e2e/`): первый запуск требует `npm install` в `e2e/` и `npx playwright install chromium`. Порт 4011/5174 изолированы от dev-окружения (4010/5173). Playwright запинован на 1.49.1 — Node 18.
 
+## Commit conventions
+
+Commits следуют [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <description>
+```
+
+- `feat` — новая функциональность
+- `fix` — исправление бага
+- `test` — тесты (unit/e2e)
+- `docs` — документация (README, AGENTS.md)
+- `refactor` — рефакторинг без изменения поведения
+- `chore` — сборка, зависимости, прочее
+- `style` — форматирование, без изменения логики
+- `perf` — оптимизация производительности
+- `BREAKING CHANGE:` в описании/футере — несовместимые изменения API
+
+Примеры: `feat(booking): add cancellation`, `fix(api): return 409 on slot conflict`, `test(e2e): cover booking flow`.
+
 ## Key files
 
 | File | Role |
