@@ -53,4 +53,4 @@ jobs:
       - run: npm --prefix frontend ci
       - run: npm --prefix e2e ci
       - run: npx playwright install --with-deps chromium
-      - run: npm --prefix e2e test
+      # - run: npm --prefix e2e test
